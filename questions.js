@@ -434,6 +434,3 @@ const questions = [
     answer: '문제에 용어 미제공, 예시: 멀웨어, 랜섬웨어, 피싱 등',
   },
 ]
-
-export default questions
-```
