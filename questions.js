@@ -433,4 +433,35 @@ const questions = [
     question: '사이버보안에서 다음을 의미하는 용어는?',
     answer: '문제에 용어 미제공, 예시: 멀웨어, 랜섬웨어, 피싱 등',
   },
+  {
+    id: 1,
+    question: "다음 코드의 출력 결과는 무엇일까요?",
+    code: `function example() {
+    let x = 10;
+    if (true) {
+        let x = 20;
+        console.log(x);
+    }
+    console.log(x);
+}
+example();`,
+    answer: "20 10",
+    explanation: "let 키워드는 블록 스코프를 가지므로, if문 내부의 x는 외부의 x와 다른 변수입니다."
+  },
+  {
+    id: 2,
+    question: "다음 코드의 출력 결과는 무엇일까요?",
+    code: `const arr = [1, 2, 3];
+arr.push(4);
+console.log(arr);`,
+    answer: "[1,2,3,4]",
+    explanation: "const로 선언된 배열은 재할당은 불가능하지만, 배열의 내용은 수정할 수 있습니다."
+  },
+  {
+    id: 3,
+    question: "다음 코드의 출력 결과는 무엇일까요?",
+    code: `console.log(1 + "1" - 1);`,
+    answer: "10",
+    explanation: "1 + '1'은 문자열 '11'이 되고, 여기서 1을 빼면 숫자 10이 됩니다."
+  }
 ]

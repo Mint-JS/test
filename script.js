@@ -1,59 +1,73 @@
 let currentQuestionIndex = 0;
-let answerContainer = document.getElementById('answer-container');
-let questionContainer = document.getElementById('question-container');
-let nextButton = document.getElementById('next-button');
-let answerText = document.getElementById('answer-text');
-let shuffledQuestions = [...questions]; // 질문 복사본을 만들어서 섞기
+let score = 0;
 
-function shuffleQuestions() {
-    for (let i = shuffledQuestions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
-    }
+function displayQuestion() {
+    const question = questions[currentQuestionIndex];
+    const questionContainer = document.getElementById('question-container');
+    
+    questionContainer.innerHTML = `
+        <h2>문제 ${question.id}</h2>
+        <p>${question.question}</p>
+        <pre>${question.code}</pre>
+        <div class="answer-section">
+            <textarea id="answer" placeholder="여기에 답을 작성해주세요..."></textarea>
+            <button onclick="checkAnswer()">답안 제출</button>
+            <div id="result" class="result"></div>
+        </div>
+    `;
 }
 
-function showQuestion(index) {
-    if (index >= shuffledQuestions.length) {
-        questionContainer.innerHTML = '퀴즈 완료! 다시 시작하려면 클릭하세요.';
-        answerContainer.classList.add('hidden');
-        nextButton.classList.add('hidden');
-        questionContainer.onclick = resetQuiz; // 퀴즈 완료 후 리셋
-        return;
+function checkAnswer() {
+    const question = questions[currentQuestionIndex];
+    const answer = document.getElementById('answer').value.trim();
+    const resultDiv = document.getElementById('result');
+    
+    if (answer === question.answer) {
+        resultDiv.className = "result correct";
+        resultDiv.innerHTML = `
+            <strong>정답입니다!</strong>
+            <p>${question.explanation}</p>
+        `;
+        score++;
+    } else {
+        resultDiv.className = "result incorrect";
+        resultDiv.innerHTML = `
+            <strong>틀렸습니다.</strong>
+            <p>정답: ${question.answer}</p>
+            <p>설명: ${question.explanation}</p>
+        `;
     }
-
-    const q = shuffledQuestions[index];
-    questionContainer.innerHTML = `<p class="mb-2"><strong>${q.chapter}</strong></p>
-                                   <p class="text-lg">${q.question}</p>`;
-
-    answerContainer.classList.add('hidden');
-    nextButton.classList.add('hidden');
-    questionContainer.onclick = () => {
-        answerText.innerText = q.answer;
-        answerContainer.classList.remove('hidden');
-        nextButton.classList.remove('hidden');
-    };
-    questionContainer.style.cursor = 'pointer'; // hover 효과를 위해 cursor 스타일 설정
+    resultDiv.style.display = "block";
+    
+    // 다음 문제 버튼 표시
+    const nextButton = document.createElement('button');
+    nextButton.textContent = '다음 문제';
+    nextButton.onclick = nextQuestion;
+    nextButton.className = 'next-button';
+    resultDiv.appendChild(nextButton);
 }
 
 function nextQuestion() {
     currentQuestionIndex++;
-    showQuestion(currentQuestionIndex);
+    if (currentQuestionIndex < questions.length) {
+        displayQuestion();
+    } else {
+        // 퀴즈 종료
+        const questionContainer = document.getElementById('question-container');
+        questionContainer.innerHTML = `
+            <h2>퀴즈 종료!</h2>
+            <p>총 ${questions.length}문제 중 ${score}문제를 맞추셨습니다.</p>
+            <button onclick="resetQuiz()">다시 시작</button>
+        `;
+    }
 }
 
 function resetQuiz() {
     currentQuestionIndex = 0;
-    shuffleQuestions(); // 퀴즈 다시 시작 시 섞기
-    showQuestion(currentQuestionIndex);
-    questionContainer.onclick = () => { // resetQuiz 함수 내에서도 onclick 이벤트 재설정
-        answerContainer.classList.remove('hidden');
-        nextButton.classList.remove('hidden');
-        answerText.innerText = shuffledQuestions[currentQuestionIndex].answer;
-    };
-    questionContainer.style.cursor = 'pointer'; // resetQuiz 함수 내에서도 cursor 스타일 재설정
+    score = 0;
+    displayQuestion();
 }
 
-
-nextButton.onclick = nextQuestion;
-
-shuffleQuestions(); // 페이지 로드 시 질문 섞기
+// 페이지 로드 시 첫 번째 문제 표시
+window.onload = displayQuestion;
 showQuestion(currentQuestionIndex);
